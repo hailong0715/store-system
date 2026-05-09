@@ -130,12 +130,13 @@ export async function POST(request: Request) {
     const orderNo = generateOrderNo();
 
     // 创建销售订单
-    await run`
+    const orderResult = await run`
       INSERT INTO sales_orders (order_no, logistics_name, logistics_no, receiver, phone, total_amount, payment_status, operator_id, operator_name, remark)
       VALUES (${orderNo}, ${logisticsName || ''}, ${logisticsNo || ''}, ${receiver || ''}, ${phone || ''}, ${totalAmount}, ${paymentStatus || 'unpaid'}, ${userId}, ${userName}, ${remark || ''})
+      RETURNING id
     `;
 
-    const orderId = await getLastInsertId();
+    const orderId = orderResult[0].id;
 
     // 处理每个商品
     for (const item of items) {

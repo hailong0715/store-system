@@ -84,11 +84,12 @@ export async function POST(request: Request) {
       } else {
         // Create new stock item with the same name but different condition
         const newSku = `${baseItem.sku}-${conditionId}`;
-        await run`
+        const newItemResult = await run`
           INSERT INTO stock_items (sku, name, category_id, condition_id, quantity, unit, location, description)
           VALUES (${newSku}, ${baseItem.name}, ${baseItem.category_id}, ${conditionId}, ${parseInt(quantity)}, ${baseItem.unit}, ${baseItem.location}, ${baseItem.description})
+          RETURNING id
         `;
-        currentItemId = await getLastInsertId();
+        currentItemId = newItemResult[0].id;
         quantityBefore = 0;
         quantityAfter = parseInt(quantity);
         stockItem = { name: baseItem.name };

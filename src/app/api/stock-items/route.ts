@@ -85,12 +85,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'SKU already exists' }, { status: 400 });
     }
 
-    await run`
+    const result = await run`
       INSERT INTO stock_items (sku, name, category_id, condition_id, quantity, unit, location, description)
       VALUES (${sku}, ${name}, ${category_id || null}, ${condition_id || null}, ${quantity || 0}, ${unit || null}, ${location || null}, ${description || null})
+      RETURNING id
     `;
 
-    const newId = await getLastInsertId();
+    const newId = result[0].id;
     const newItem = await getOne`
       SELECT si.*, c.name as category_name, pc.name as condition_name
       FROM stock_items si

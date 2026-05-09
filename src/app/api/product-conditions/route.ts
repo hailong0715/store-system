@@ -36,9 +36,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Condition name is required' }, { status: 400 });
     }
 
-    await run`INSERT INTO product_conditions (name, description) VALUES (${name}, ${description || null})`;
+    const result = await run`INSERT INTO product_conditions (name, description) VALUES (${name}, ${description || null}) RETURNING id`;
 
-    const newId = await getLastInsertId();
+    const newId = result[0].id;
     const newCondition = await getOne`SELECT * FROM product_conditions WHERE id = ${newId}`;
 
     return NextResponse.json(newCondition, { status: 201 });

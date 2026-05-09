@@ -32,12 +32,13 @@ export async function POST(request: Request) {
     });
 
     // Insert purchase order
-    await run`
+    const orderResult = await run`
       INSERT INTO purchase_orders (logistics_name, logistics_no, sender, phone, total_amount, status, operator_id, operator_name, remark)
       VALUES (${logisticsName}, ${logisticsNo}, ${sender || ''}, ${phone || ''}, ${totalAmount}, 'completed', ${operatorId}, ${operatorName}, ${remark || ''})
+      RETURNING id
     `;
 
-    const purchaseOrderId = await getLastInsertId();
+    const purchaseOrderId = orderResult[0].id;
 
     // Insert purchase order items and update stock
     for (const item of items) {

@@ -36,9 +36,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
     }
 
-    await run`INSERT INTO categories (name, description) VALUES (${name}, ${description || null})`;
-
-    const newId = await getLastInsertId();
+    const result = await run`INSERT INTO categories (name, description) VALUES (${name}, ${description || null}) RETURNING id`;
+    const newId = result[0].id;
     const newCategory = await getOne`SELECT * FROM categories WHERE id = ${newId}`;
 
     return NextResponse.json(newCategory, { status: 201 });

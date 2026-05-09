@@ -42,7 +42,7 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY si.id DESC';
 
-    const items = await sql(query);
+    const items = await sql(query as any);
 
     return NextResponse.json(items);
   } catch (error) {

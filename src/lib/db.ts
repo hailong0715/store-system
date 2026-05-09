@@ -1,5 +1,7 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import bcrypt from 'bcryptjs';
+
+const sql = neon(process.env.POSTGRES_URL || '');
 
 let initialized = false;
 
@@ -167,7 +169,7 @@ export async function initDb() {
 
     // Create admin user if not exists
     const adminResult = await sql`SELECT id FROM users WHERE username = 'admin'`;
-    if (adminResult.rows.length === 0) {
+    if (adminResult.length === 0) {
       const passwordHash = bcrypt.hashSync('admin123', 10);
       await sql`
         INSERT INTO users (username, password_hash, name, role, status, permissions)
@@ -192,13 +194,13 @@ export async function initDb() {
 // Helper function to get a single row
 export async function getOne(sqlQuery: TemplateStringsArray, ...params: any[]) {
   const result = await sql(sqlQuery, ...params);
-  return result.rows[0] || null;
+  return result[0] || null;
 }
 
 // Helper function to get all rows
 export async function getAll(sqlQuery: TemplateStringsArray, ...params: any[]) {
   const result = await sql(sqlQuery, ...params);
-  return result.rows;
+  return result;
 }
 
 // Helper function to run insert/update/delete
@@ -210,7 +212,7 @@ export async function run(sqlQuery: TemplateStringsArray, ...params: any[]) {
 // Helper function to get last inserted id
 export async function getLastInsertId(): Promise<number> {
   const result = await sql`SELECT lastval() as id`;
-  return result.rows[0].id;
+  return result[0].id;
 }
 
 export { sql };

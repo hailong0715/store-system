@@ -33,10 +33,10 @@ export async function GET(request: Request) {
       FROM stock_items si
       LEFT JOIN categories c ON si.category_id = c.id
       LEFT JOIN product_conditions pc ON si.condition_id = pc.id
-      WHERE si.is_deleted = 0 AND si.name LIKE '%${q}%'
+      WHERE si.is_deleted = 0 AND si.name LIKE ${'%' + q + '%'}
       ORDER BY si.name ASC
       LIMIT 20
-    ` as any[];
+    `;
 
     console.log('Search API返回:', JSON.stringify(items));
 

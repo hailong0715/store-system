@@ -20,28 +20,42 @@ export async function GET(request: Request) {
       return NextResponse.json(null);
     }
 
-    let query = `
-      SELECT
-        si.id,
-        si.sku,
-        si.name,
-        si.category_id,
-        si.quantity,
-        si.unit,
-        si.condition_id,
-        c.name as category_name,
-        pc.name as condition_name
-      FROM stock_items si
-      LEFT JOIN categories c ON si.category_id = c.id
-      LEFT JOIN product_conditions pc ON si.condition_id = pc.id
-      WHERE si.is_deleted = 0 AND si.name = '${name}'
-    `;
-
+    let item;
     if (conditionId) {
-      query += ` AND si.condition_id = ${parseInt(conditionId)}`;
+      item = await getOne`
+        SELECT
+          si.id,
+          si.sku,
+          si.name,
+          si.category_id,
+          si.quantity,
+          si.unit,
+          si.condition_id,
+          c.name as category_name,
+          pc.name as condition_name
+        FROM stock_items si
+        LEFT JOIN categories c ON si.category_id = c.id
+        LEFT JOIN product_conditions pc ON si.condition_id = pc.id
+        WHERE si.is_deleted = 0 AND si.name = ${name} AND si.condition_id = ${parseInt(conditionId)}
+      `;
+    } else {
+      item = await getOne`
+        SELECT
+          si.id,
+          si.sku,
+          si.name,
+          si.category_id,
+          si.quantity,
+          si.unit,
+          si.condition_id,
+          c.name as category_name,
+          pc.name as condition_name
+        FROM stock_items si
+        LEFT JOIN categories c ON si.category_id = c.id
+        LEFT JOIN product_conditions pc ON si.condition_id = pc.id
+        WHERE si.is_deleted = 0 AND si.name = ${name}
+      `;
     }
-
-    const item = await getOne`${query}` as any;
 
     return NextResponse.json(item);
   } catch (error) {

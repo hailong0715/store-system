@@ -58,6 +58,9 @@ export function Navbar() {
             <Link href="/categories" className="text-gray-600 hover:text-gray-900">
               分类管理
             </Link>
+            <Link href="/product-conditions" className="text-gray-600 hover:text-gray-900">
+              商品属性
+            </Link>
             <Link href="/logs" className="text-gray-600 hover:text-gray-900">
               操作日志
             </Link>

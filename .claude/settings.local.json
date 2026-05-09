@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf node_modules)",
+      "Bash(rm -f .gitignore README.md eslint.config.mjs next-env.d.ts next.config.ts package.json postcss.config.mjs tsconfig.json)",
+      "Bash(rm -rf public src)",
+      "Bash(curl -s -X POST http://localhost:3000/api/stock-items -H \"Content-Type: application/json\" -d '{\"sku\":\"PROD-001\",\"name\":\"iPhone 15 Pro\",\"category_id\":1,\"condition_id\":1,\"quantity\":10,\"unit\":\"台\",\"location\":\"A区-01-01\",\"description\":\"256GB 钛金属色\"}')"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { getOne, getAll, run, getLastInsertId, initDb } from '@/lib/db';
+import { getOne, getAll, run, getLastInsertId, initDb, sql } from '@/lib/db';
 
 // GET /api/stock-items - 获取商品列表
 export async function GET(request: Request) {
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
 
     query += ' ORDER BY si.id DESC';
 
-    const items = await getAll`${query}`;
+    const items = await sql(query);
 
     return NextResponse.json(items);
   } catch (error) {
